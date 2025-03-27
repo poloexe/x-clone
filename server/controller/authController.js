@@ -47,13 +47,14 @@ export const signUp = async (req, res) => {
         },
       });
     } else {
-      res.status(400).json({ error: "Invalid user data" });
+      return res.status(400).json({ error: "Invalid user data" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
+
 export const signIn = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -88,10 +89,28 @@ export const signIn = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
+
 export const logOut = async (req, res) => {
   try {
-  } catch (error) {}
+    res.cookie("jwt", "", {
+      maxAge: 0,
+    });
+    return res.status(200).json({ msg: "Logged out successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password");
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 };
