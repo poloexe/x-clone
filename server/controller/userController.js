@@ -112,7 +112,7 @@ export const updateUser = async (req, res) => {
     if (currentPassword && newPassword) {
       const isMatch = await user.comparePassword(currentPassword);
       if (!isMatch)
-        return res.status(400).json({ msg: "Passwords do not match" });
+        return res.status(400).json({ msg: "Current password is incorrect" });
 
       if (newPassword.length < 7)
         return res.status(400).json({ msg: "New Password is too short" });
