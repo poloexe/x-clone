@@ -69,7 +69,7 @@ export const signIn = async (req, res) => {
 
     const authenticated = await user.comparePassword(password);
     if (!authenticated) {
-      return res.status(400).json({ msg: "Email or password is incorrect" });
+      return res.status(400).json({ msg: "username or password is incorrect" });
     }
 
     user.generateTokenAndSetCookie(res);
