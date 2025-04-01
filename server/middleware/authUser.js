@@ -18,7 +18,6 @@ export const authUser = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ msg: "Internal server error" });
+    return res.status(500).json({ msg: error.message });
   }
 };

@@ -8,49 +8,44 @@ export const signUp = async (req, res) => {
       return res.status(400).json({ msg: "All fields are required" });
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ msg: "Invalid email format" });
-    }
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(email))
+      return res.status(400).json({ error: "Invalid email format" });
 
-    const userNameExist = await User.findOne({ username });
-    if (userNameExist) {
-      return res.status(400).json({ msg: "Username taken, Try another one" });
-    }
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername)
+      return res.status(400).json({ error: "Username is already taken" });
 
-    const emailExist = await User.findOne({ email });
-    if (emailExist) {
-      return res.status(400).json({ msg: "Email taken, Try another one" });
-    }
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail)
+      return res.status(400).json({ error: "Email is already registered" });
 
-    if (password.length < 7) {
-      return res.status(400).json({ msg: "Password is too short" });
-    }
-
-    const newUser = new User(req.body);
+    const newUser = new User({
+      fullName,
+      username,
+      email,
+      password,
+    });
 
     if (newUser) {
       newUser.generateTokenAndSetCookie(res);
       await newUser.save();
 
       return res.status(201).json({
-        status: true,
-        user: {
-          _id,
-          fullName,
-          username,
-          email,
-          followers,
-          following,
-          profileImg,
-          coverImg,
-        },
+        _id: newUser._id,
+        fullName: newUser.fullName,
+        username: newUser.username,
+        email: newUser.email,
+        followers: newUser.followers,
+        following: newUser.following,
+        profileImg: newUser.profileImg,
+        coverImg: newUser.coverImg,
       });
     } else {
-      return res.status(400).json({ error: "Invalid user data" });
+      return res.status(400).send("Invalid user data");
     }
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(400).json(error.message);
   }
 };
 
@@ -73,7 +68,7 @@ export const signIn = async (req, res) => {
 
     user.generateTokenAndSetCookie(res);
 
-    return res.status(201).json({
+    return res.status(200).json({
       status: true,
       user: {
         _id: user._id,

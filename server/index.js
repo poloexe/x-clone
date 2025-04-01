@@ -7,6 +7,7 @@ import userRouter from "./routes/userRouter.js";
 import { authUser } from "./middleware/authUser.js";
 import { v2 as cloudinary } from "cloudinary";
 import postRouter from "./routes/postRouter.js";
+import notificationRouter from "./routes/notificationRouter.js";
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -25,6 +26,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api/user", authUser, userRouter);
 app.use("/api/post", authUser, postRouter);
+app.use("/api/notification", authUser, notificationRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}...`);
