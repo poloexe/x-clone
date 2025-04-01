@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
+import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-const userSchema = new mongoose.Schema(
+const userSchema = new Schema(
   {
     username: {
       type: String,
@@ -25,14 +25,14 @@ const userSchema = new mongoose.Schema(
     },
     followers: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "User",
         default: [], //User has 0 followers after signing up
       },
     ],
     following: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "User",
         default: [], //User has 0 following after signing up
       },
@@ -55,7 +55,7 @@ const userSchema = new mongoose.Schema(
     },
     likedPosts: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "Post",
       },
     ],
@@ -88,5 +88,5 @@ userSchema.methods.comparePassword = async function (userPassword) {
   return isCorrect;
 };
 
-const User = mongoose.model("User", userSchema);
+const User = model("User", userSchema);
 export default User;

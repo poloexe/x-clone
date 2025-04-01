@@ -11,8 +11,7 @@ export const getUserProfile = async (req, res) => {
 
     return res.status(200).json(user);
   } catch (error) {
-    console.error(error.message);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -34,7 +33,6 @@ export const followAndUnfollowUser = async (req, res) => {
 
     const isFollowing = currentUser.following.includes(id);
     if (isFollowing) {
-      // UnFollow the user
       await User.findByIdAndUpdate(id, { $pull: { followers: req.user._id } });
       await User.findByIdAndUpdate(req.user._id, { $pull: { following: id } });
 
@@ -42,11 +40,9 @@ export const followAndUnfollowUser = async (req, res) => {
 
       return res.status(200).json({ msg: "User unfollowed successfully" });
     } else {
-      // follow the user
       await User.findByIdAndUpdate(id, { $push: { followers: req.user._id } });
       await User.findByIdAndUpdate(req.user._id, { $push: { following: id } });
 
-      //   Send notifications to the user
       const newNotification = new Notification({
         type: "follow",
         from: req.user._id,
@@ -59,7 +55,9 @@ export const followAndUnfollowUser = async (req, res) => {
 
       return res.status(200).json({ msg: "User followed successfully" });
     }
-  } catch (error) {}
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
 };
 
 export const getSuggestedUsers = async (req, res) => {
@@ -88,8 +86,7 @@ export const getSuggestedUsers = async (req, res) => {
 
     return res.status(200).json(suggestedUsers);
   } catch (error) {
-    console.error(error.message);
-    return res.status(500).json({ msg: "Internal server error" });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -119,7 +116,6 @@ export const updateUser = async (req, res) => {
     }
 
     if (profileImg) {
-      /* Checks if there is a profile img and deletes it */
       if (user.profileImg) {
         await cloudinary.uploader.destroy(
           user.profileImg.split("/").pop().split(".")[0]
@@ -130,7 +126,6 @@ export const updateUser = async (req, res) => {
     }
 
     if (coverImg) {
-      /* Checks if there is a cover img and deletes it */
       if (user.coverImg) {
         await cloudinary.uploader.destroy(
           user.coverImg.split("/").pop().split(".")[0]
@@ -143,18 +138,17 @@ export const updateUser = async (req, res) => {
     user.fullName = fullName || user.fullName;
     user.username = username || user.username;
     user.email = email || user.email;
+    user.password = newPassword || user.password;
     user.bio = bio || user.bio;
     user.link = link || user.link;
     user.profileImg = profileImg || user.profileImg;
     user.coverImg = coverImg || user.coverImg;
 
     user = await user.save();
-
-    user.password = null; // Password will be null when returned
+    user.password = null;
 
     return res.status(200).json(user);
   } catch (error) {
-    console.error(error.message);
-    return res.status(500).json({ msg: "Internal server error" });
+    return res.status(500).json({ error: error.message });
   }
 };

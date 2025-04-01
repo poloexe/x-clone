@@ -36,22 +36,21 @@ export const signUp = async (req, res) => {
       return res.status(201).json({
         status: true,
         user: {
-          _id: newUser._id,
-          fullName: newUser.fullName,
-          username: newUser.username,
-          email: newUser.email,
-          followers: newUser.followers,
-          following: newUser.following,
-          profileImg: newUser.profileImg,
-          coverImg: newUser.coverImg,
+          _id,
+          fullName,
+          username,
+          email,
+          followers,
+          following,
+          profileImg,
+          coverImg,
         },
       });
     } else {
       return res.status(400).json({ error: "Invalid user data" });
     }
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -88,8 +87,7 @@ export const signIn = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -100,8 +98,7 @@ export const logOut = async (req, res) => {
     });
     return res.status(200).json({ msg: "Logged out successfully" });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -110,7 +107,6 @@ export const getUser = async (req, res) => {
     const user = await User.findById(req.user._id).select("-password");
     return res.status(200).json(user);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: error.message });
   }
 };
