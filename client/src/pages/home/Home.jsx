@@ -1,10 +1,13 @@
-import React from "react";
+import { useState } from "react";
+import CreatePost from "./CreatePost";
+import Posts from "./Posts";
 
 const Home = () => {
+  const [feedType, setFeedType] = useState("forYou");
+
   return (
     <>
       <div className="flex-[4_4_0] mr-auto border-r border-gray-700 min-h-screen">
-        <p>This is the home page</p>
         {/* Header */}
         <div className="flex w-full border-b border-gray-700">
           <div
