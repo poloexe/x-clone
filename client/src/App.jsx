@@ -4,6 +4,8 @@ import Login from "./pages/auth/Login";
 import SignUp from "./pages/auth/SignUp";
 import Sidebar from "./components/common/Sidebar";
 import RightPanel from "./components/common/RightPanel";
+import Notification from "./pages/notifications/Notification";
+import Profile from "./pages/profile/Profile";
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/notifications" element={<Notification />} />
+          <Route path="/profile/:username" element={<Profile />} />
         </Routes>
         <RightPanel />
       </div>
