@@ -6,12 +6,13 @@ import Sidebar from "./components/common/Sidebar";
 import RightPanel from "./components/common/RightPanel";
 import Notification from "./pages/notifications/Notification";
 import Profile from "./pages/profile/Profile";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <>
       <div className="flex max-w-6xl mx-auto">
-        <Sidebar />
+        {/* <Sidebar /> */}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -19,7 +20,8 @@ function App() {
           <Route path="/notifications" element={<Notification />} />
           <Route path="/profile/:username" element={<Profile />} />
         </Routes>
-        <RightPanel />
+        {/* <RightPanel /> */}
+        <Toaster />
       </div>
     </>
   );

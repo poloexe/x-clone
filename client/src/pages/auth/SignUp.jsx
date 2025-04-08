@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import XSvg from "../../components/svgs/X.jsx";
 import { MdOutlineMail } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import { MdPassword } from "react-icons/md";
 import { MdDriveFileRenameOutline } from "react-icons/md";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -14,16 +16,46 @@ const SignUp = () => {
     password: "",
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
-  };
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const isError = false;
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: async ({ email, username, fullName, password }) => {
+      try {
+        const res = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({ email, username, fullName, password }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || "Something went wrong");
+      } catch (error) {
+        console.log(error.message);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      toast.success("Account created, now login");
+      setFormData({
+        email: "",
+        username: "",
+        fullName: "",
+        password: "",
+      });
+      navigate("/login");
+    },
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    mutate(formData);
+  };
 
   return (
     <div className="max-w-screen-xl mx-auto flex h-screen px-10">
@@ -40,7 +72,7 @@ const SignUp = () => {
           <label className="input input-bordered rounded flex items-center gap-2">
             <MdOutlineMail />
             <input
-              type="email"
+              type="text"
               className="grow"
               placeholder="Email"
               name="email"
@@ -83,10 +115,15 @@ const SignUp = () => {
               value={formData.password}
             />
           </label>
-          <button className="btn rounded-full btn-primary text-white">
-            Sign up
+          <button
+            className="btn rounded-full btn-primary text-white"
+            disabled={isPending}
+          >
+            SignUp
           </button>
-          {isError && <p className="text-red-500">Something went wrong</p>}
+          {isError && (
+            <p className="text-red-500 text-sm mt-2">{error.message}</p>
+          )}
         </form>
         <div className="flex flex-col lg:w-2/3 gap-2 mt-4">
           <p className="text-white text-lg">Already have an account?</p>
