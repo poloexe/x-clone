@@ -12,11 +12,13 @@ import LoadingSpinner from "./components/common/LoadingSpinner";
 
 function App() {
   const { data: authUser, isLoading } = useQuery({
-    queryKey: ["authUser"], // Used to ref queries in diff components 
+    queryKey: ["authUser"], // Used to ref queries in diff components
     queryFn: async () => {
       try {
         const res = await fetch("/api/auth/getuser");
         const data = await res.json();
+
+        if (data.error) return null;
 
         if (!res.ok) throw new Error(data.error || "Something went wrong");
         console.log(data);
@@ -27,6 +29,8 @@ function App() {
         throw error;
       }
     },
+
+    retry: false,
   });
 
   if (isLoading) {
@@ -40,7 +44,7 @@ function App() {
   return (
     <>
       <div className="flex max-w-6xl mx-auto">
-        <Sidebar />
+        {authUser && <Sidebar />}
         <Routes>
           <Route
             path="/"
@@ -63,7 +67,7 @@ function App() {
             element={authUser ? <Profile /> : <Navigate to="login" />}
           />
         </Routes>
-        <RightPanel />
+        {authUser && <RightPanel />}
         <Toaster />
       </div>
     </>
