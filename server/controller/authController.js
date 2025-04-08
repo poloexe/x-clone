@@ -5,7 +5,7 @@ export const signUp = async (req, res) => {
     const { fullName, username, email, password } = req.body;
 
     if (!fullName || !username || !email || !password) {
-      return res.status(400).json({ msg: "All fields are required" });
+      return res.status(400).json({ error: "All fields are required" });
     }
 
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -59,17 +59,19 @@ export const signIn = async (req, res) => {
   try {
     const { username, password } = req.body;
     if (!username || !password) {
-      return res.status(400).json({ msg: "All fields are required" });
+      return res.status(400).json({ error: "All fields are required" });
     }
 
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(400).json({ msg: "No user found, Register" });
+      return res.status(400).json({ error: "No user found, Register" });
     }
 
     const authenticated = await user.comparePassword(password);
     if (!authenticated) {
-      return res.status(400).json({ msg: "username or password is incorrect" });
+      return res
+        .status(400)
+        .json({ error: "username or password is incorrect" });
     }
 
     user.generateTokenAndSetCookie(res);
