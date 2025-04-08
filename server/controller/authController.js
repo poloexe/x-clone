@@ -20,6 +20,12 @@ export const signUp = async (req, res) => {
     if (existingEmail)
       return res.status(400).json({ error: "Email is already registered" });
 
+    if (password.length < 7) {
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 7 characters long" });
+    }
+
     const newUser = new User({
       fullName,
       username,

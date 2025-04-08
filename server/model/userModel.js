@@ -6,22 +6,22 @@ const userSchema = new Schema(
   {
     username: {
       type: String,
-      required: [true, "Username is required"],
+      required: true,
       unique: true,
     },
     fullName: {
       type: String,
-      required: [true, "FullName is required"],
+      required: true,
     },
     email: {
       type: String,
-      required: [true, "Email is required"],
+      required: true,
       unique: true,
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
-      minlength: [7, "Minimum of 7 characters"],
+      required: true,
+      minlength: 7,
     },
     followers: [
       {
