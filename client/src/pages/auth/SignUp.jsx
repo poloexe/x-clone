@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import XSvg from "../../components/svgs/X.jsx";
 import { MdOutlineMail } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
@@ -15,8 +15,6 @@ const SignUp = () => {
     fullName: "",
     password: "",
   });
-
-  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -48,7 +46,6 @@ const SignUp = () => {
         fullName: "",
         password: "",
       });
-      navigate("/login");
     },
   });
 
