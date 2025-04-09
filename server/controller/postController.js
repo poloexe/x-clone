@@ -10,7 +10,7 @@ export const createPost = async (req, res) => {
     let { img } = req.body;
 
     const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ msg: "User not found" });
+    if (!user) return res.status(404).json({ error: "User not found" });
 
     if (img) {
       const uploadResult = await cloudinary.uploader.upload(img);
@@ -20,7 +20,7 @@ export const createPost = async (req, res) => {
     if (!text && !img)
       return res
         .status(400)
-        .json({ msg: "Post must include a text or an img" });
+        .json({ error: "Post must include a text or an img" });
 
     const newPost = new Post({
       user: userId,
@@ -42,13 +42,13 @@ export const deletePost = async (req, res) => {
     const post = await Post.findById(req.params.id);
 
     if (!post) {
-      return res.status(404).json({ msg: "No posts found" });
+      return res.status(404).json({ error: "No posts found" });
     }
 
     if (post.user.toString() !== req.user._id.toString()) {
       return res
         .status(400)
-        .json({ msg: "You are not allowed to delete this post" });
+        .json({ error: "You are not allowed to delete this post" });
     }
 
     if (post.img) {
@@ -72,9 +72,9 @@ export const commentOnPost = async (req, res) => {
     const userId = req.user._id;
 
     const post = await Post.findById(postId);
-    if (!post) return res.status(404).json({ msg: "No Post found" });
+    if (!post) return res.status(404).json({ error: "No Post found" });
 
-    if (!text) return res.status(400).json({ msg: "Text field is required" });
+    if (!text) return res.status(400).json({ error: "Text field is required" });
 
     const newComment = { text, user: userId };
 
@@ -93,10 +93,10 @@ export const likeUnlikePost = async (req, res) => {
     const userId = req.user._id;
 
     const post = await Post.findById(postId);
-    if (!post) return res.status(404).json({ msg: "No Post found" });
+    if (!post) return res.status(404).json({ error: "No Post found" });
 
     const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ msg: "User not found" });
+    if (!user) return res.status(404).json({ error: "User not found" });
 
     const userLikedPost = post.likes.includes(userId);
 
@@ -151,16 +151,16 @@ export const getLikedPost = async (req, res) => {
 
     const posts = await Post.find();
     if (!posts || posts.length === 0)
-      return res.status(404).json({ msg: "No Posts available" });
+      return res.status(404).json({ error: "No Posts available" });
 
     const likedPosts = posts.filter((post) => post.likes.includes(userId));
 
     if (!likedPosts || likedPosts.length === 0)
-      return res.status(404).json({ msg: "No Liked Posts available" });
+      return res.status(404).json({ error: "No Liked Posts available" });
 
     return res.status(200).json(likedPosts);
   } catch (error) {
-    return res.status(400).json({ msg: error.message });
+    return res.status(400).json({ error: error.message });
   }
 };
 
@@ -169,11 +169,11 @@ export const getFollowingPosts = async (req, res) => {
     const userId = req.user._id;
 
     const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ msg: "User not found" });
+    if (!user) return res.status(404).json({ error: "User not found" });
 
     const following = user.following;
     if (!following || following.length === 0) {
-      return res.status(200).json({ msg: "No posts from following users" });
+      return res.status(200).json({ error: "No posts from following users" });
     }
 
     const followingPosts = await Post.find({ user: { $in: following } })
