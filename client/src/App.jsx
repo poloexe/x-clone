@@ -7,31 +7,11 @@ import RightPanel from "./components/common/RightPanel";
 import Notification from "./pages/notifications/Notification";
 import Profile from "./pages/profile/Profile";
 import { Toaster } from "react-hot-toast";
-import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./components/common/LoadingSpinner";
+import { useAuthUser } from "./hooks/useAuthUser";
 
 function App() {
-  const { data: authUser, isLoading } = useQuery({
-    queryKey: ["authUser"], // Used to ref queries in diff components
-    queryFn: async () => {
-      try {
-        const res = await fetch("/api/auth/getuser");
-        const data = await res.json();
-
-        if (data.error) return null;
-
-        if (!res.ok) throw new Error(data.error || "Something went wrong");
-        console.log(data);
-
-        return data;
-      } catch (error) {
-        console.log(error.message);
-        throw error;
-      }
-    },
-
-    retry: false,
-  });
+  const { data: authUser, isLoading } = useAuthUser();
 
   if (isLoading) {
     return (
@@ -60,11 +40,11 @@ function App() {
           />
           <Route
             path="/notifications"
-            element={authUser ? <Notification /> : <Navigate to="login" />}
+            element={authUser ? <Notification /> : <Navigate to="/login" />}
           />
           <Route
             path="/profile/:username"
-            element={authUser ? <Profile /> : <Navigate to="login" />}
+            element={authUser ? <Profile /> : <Navigate to="/login" />}
           />
         </Routes>
         {authUser && <RightPanel />}
