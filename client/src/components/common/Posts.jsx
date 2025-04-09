@@ -1,25 +1,47 @@
 import Post from "./Post";
 import PostSkeleton from "../skeletons/PostSkeleton";
-import { POSTS } from "../../db/dummy";
+import { usePosts } from "../../hooks/usePosts";
+import { useEffect } from "react";
 
-const Posts = () => {
-  const isLoading = false;
+const Posts = ({ feedType }) => {
+  const getEndPoint = () => {
+    if (feedType === "forYou") {
+      return "/api/post/all";
+    } else if (feedType === "following") {
+      return "/api/post/following";
+    } else {
+      return "/api/post/all";
+    }
+  };
+
+  const postEndPoint = getEndPoint();
+
+  const {
+    data: posts,
+    isLoading,
+    refetch,
+    isRefetching,
+  } = usePosts({ postEndPoint });
+
+  useEffect(() => {
+    refetch();
+  }, [feedType, refetch]);
 
   return (
     <>
-      {isLoading && (
+      {(isLoading || isRefetching) && (
         <div className="flex flex-col justify-center">
           <PostSkeleton />
           <PostSkeleton />
           <PostSkeleton />
         </div>
       )}
-      {!isLoading && POSTS?.length === 0 && (
+      {!isLoading && !isRefetching && posts?.length === 0 && (
         <p className="text-center my-4">No posts in this tab. Switch 👻</p>
       )}
-      {!isLoading && POSTS && (
+      {!isLoading && !isRefetching && posts && (
         <div>
-          {POSTS.map((post) => (
+          {posts.map((post) => (
             <Post key={post._id} post={post} />
           ))}
         </div>
