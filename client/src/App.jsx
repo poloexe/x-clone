@@ -48,7 +48,16 @@ function App() {
           />
         </Routes>
         {authUser && <RightPanel />}
-        <Toaster />
+        <Toaster
+          toastOptions={{
+            success: {
+              style: {
+                background: "black",
+                color: "white",
+              },
+            },
+          }}
+        />
       </div>
     </>
   );
