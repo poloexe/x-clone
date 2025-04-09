@@ -7,7 +7,7 @@ export const getUserProfile = async (req, res) => {
 
   try {
     const user = await User.findOne({ username }).select("-password");
-    if (!user) return res.status(404).json({ msg: "User not found" });
+    if (!user) return res.status(404).json({ error: "User not found" });
 
     return res.status(200).json(user);
   } catch (error) {
@@ -24,11 +24,11 @@ export const followAndUnfollowUser = async (req, res) => {
     if (id === req.user._id.toString()) {
       return res
         .status(400)
-        .json({ msg: "you cannot follow/unfollow yourself" });
+        .json({ error: "you cannot follow/unfollow yourself" });
     }
 
     if (!userToModify || !currentUser) {
-      return res.status(400).json({ msg: "User not found" });
+      return res.status(400).json({ error: "User not found" });
     }
 
     const isFollowing = currentUser.following.includes(id);
@@ -99,20 +99,20 @@ export const updateUser = async (req, res) => {
 
   try {
     let user = await User.findById(userId);
-    if (!user) return res.status(404).json({ msg: "No user found" });
+    if (!user) return res.status(404).json({ error: "No user found" });
 
     if ((!currentPassword && newPassword) || (!newPassword && currentPassword))
       return res
         .status(400)
-        .json({ msg: "Fill both current password and new password" });
+        .json({ error: "Fill both current password and new password" });
 
     if (currentPassword && newPassword) {
       const isMatch = await user.comparePassword(currentPassword);
       if (!isMatch)
-        return res.status(400).json({ msg: "Current password is incorrect" });
+        return res.status(400).json({ error: "Current password is incorrect" });
 
       if (newPassword.length < 7)
-        return res.status(400).json({ msg: "New Password is too short" });
+        return res.status(400).json({ error: "New Password is too short" });
     }
 
     if (profileImg) {
