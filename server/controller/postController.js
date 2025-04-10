@@ -81,7 +81,14 @@ export const commentOnPost = async (req, res) => {
     post.comments.push(newComment);
     await post.save();
 
-    return res.status(200).json(post);
+    const updatedPost = await Post.findById(postId).populate({
+      path: "comments.user",
+      select: "fullName username profileImg",
+    });
+
+    const updatedComments = updatedPost.comments;
+
+    return res.status(200).json(updatedComments);
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -137,11 +144,11 @@ export const getAllPosts = async (req, res) => {
       .populate([
         {
           path: "user",
-          select: "fullname username",
+          select: "fullName username",
         },
         {
           path: "comments.user",
-          select: "fullname username",
+          select: "fullName username",
         },
       ]);
 

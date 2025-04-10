@@ -20,7 +20,7 @@ const Post = ({ post }) => {
 
   const formattedDate = "1h";
 
-  const isCommenting = false;
+  // const isCommenting = false;
 
   const queryClient = useQueryClient();
 
@@ -74,12 +74,50 @@ const Post = ({ post }) => {
     },
   });
 
+  // console.log(post);
+
+  const { mutate: commentPost, isPending: isCommenting } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`/api/post/comment/${post._id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: comment }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || "Something went wrong");
+
+        return data;
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message);
+        throw error;
+      }
+    },
+    onSuccess: (updatedComments) => {
+      toast.success("Commented");
+      // Gets the updated likes from the backend and filter
+      queryClient.setQueryData(["posts"], (oldData) => {
+        return oldData.map((p) => {
+          if (p._id === post._id) {
+            return { ...p, comments: updatedComments };
+          }
+
+          return p;
+        });
+      });
+    },
+  });
+
   const handleDeletePost = () => {
     deletePost();
   };
 
   const handlePostComment = (e) => {
     e.preventDefault();
+    if (isCommenting) return;
+    commentPost();
   };
 
   const handleLikePost = () => {
@@ -150,12 +188,13 @@ const Post = ({ post }) => {
                   {post.comments.length}
                 </span>
               </div>
+
               {/* Component from DaisyUI */}
               <dialog
                 id={`comments_modal${post._id}`}
                 className="modal border-none outline-none"
               >
-                <div className="modal-box rounded border border-gray-600">
+                <div className="modal-box rounded-2xl border border-gray-600">
                   <h3 className="font-bold text-lg mb-4">COMMENTS</h3>
                   <div className="flex flex-col gap-3 max-h-60 overflow-auto">
                     {post.comments.length === 0 && (

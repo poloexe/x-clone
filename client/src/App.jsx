@@ -56,6 +56,12 @@ function App() {
                 color: "white",
               },
             },
+            error: {
+              style: {
+                background: "black",
+                color: "white",
+              },
+            },
           }}
         />
       </div>
