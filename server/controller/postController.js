@@ -186,7 +186,7 @@ export const getFollowingPosts = async (req, res) => {
 
     const following = user.following;
     if (!following || following.length === 0) {
-      return res.status(200).json({ error: "No posts from following users" });
+      return res.status(404).json({ error: "No posts from following users" });
     }
 
     const followingPosts = await Post.find({ user: { $in: following } })
