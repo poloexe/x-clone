@@ -94,6 +94,7 @@ const Post = ({ post }) => {
     },
     onSuccess: (updatedComments) => {
       toast.success("Commented");
+      setComment("");
       // Gets the updated likes from the backend and filter
       queryClient.setQueryData(["posts"], (oldData) => {
         return oldData.map((p) => {

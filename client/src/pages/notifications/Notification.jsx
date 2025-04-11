@@ -4,32 +4,39 @@ import LoadingSpinner from "../../components/common/LoadingSpinner";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
+import { useNotifications } from "../../hooks/useNotifications";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const Notification = () => {
-  const isLoading = false;
-  const notifications = [
-    {
-      _id: "1",
-      from: {
-        _id: "1",
-        username: "johndoe",
-        profileImg: "/avatars/boy2.png",
-      },
-      type: "follow",
+  const queryClient = useQueryClient();
+
+  const { data: notifications, isLoading } = useNotifications();
+  const { mutate: deleteAllNotifications, isPending } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch("/api/notification/delete", {
+          method: "DELETE",
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || "Something went wrong");
+
+        return data;
+      } catch (error) {
+        console.log(error.message);
+        throw error;
+      }
     },
-    {
-      _id: "2",
-      from: {
-        _id: "2",
-        username: "janedoe",
-        profileImg: "/avatars/girl1.png",
-      },
-      type: "like",
+    onSuccess: () => {
+      toast.success("Deleted");
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
-  ];
+  });
 
   const deleteNotifications = () => {
-    alert("All notifications deleted");
+    if (isPending) return;
+    deleteAllNotifications();
   };
 
   return (
@@ -46,7 +53,9 @@ const Notification = () => {
               className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
-                <a onClick={deleteNotifications}>Delete all notifications</a>
+                <a onClick={isPending ? undefined : deleteNotifications}>
+                  Delete all notifications
+                </a>
               </li>
             </ul>
           </div>
@@ -56,7 +65,7 @@ const Notification = () => {
             <LoadingSpinner size="lg" />
           </div>
         )}
-        {notifications?.length === 0 && (
+        {!isLoading && (!notifications || notifications?.length === 0) && (
           <div className="text-center p-4 font-bold">No notifications 🤔</div>
         )}
         {notifications?.map((notification) => (
