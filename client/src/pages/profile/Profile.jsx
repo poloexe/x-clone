@@ -14,6 +14,8 @@ import { useUserProfile } from "../../hooks/useUserProfile";
 import { formatMemberSinceDate } from "../../utils/date";
 import { useAuthUser } from "../../hooks/useAuthUser";
 import { useFollow } from "../../hooks/useFollow";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const Profile = () => {
   const [coverImg, setCoverImg] = useState(null);
@@ -30,14 +32,42 @@ const Profile = () => {
     isRefetching,
   } = useUserProfile({ username });
 
-  const { mutate: follow, isPending } = useFollow();
+  const { mutate: follow, isPending: isFollowing } = useFollow();
+  const queryClient = useQueryClient();
+
+  // Updating cover image and profile img
+  const { mutate: updateProfile, isPending: isUpdatingProfile } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch("/api/user/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ coverImg, profileImg }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || "Something went wrong");
+        return data;
+      } catch (error) {
+        console.log(error.message);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      toast.success("Updated");
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["authUser"] }),
+        queryClient.invalidateQueries({ queryKey: ["userProfile"] }),
+      ]);
+    },
+  });
 
   const coverImgRef = useRef(null);
   const profileImgRef = useRef(null);
 
   const isMyProfile = authUser?._id === user?._id;
 
-  const isFollowing = authUser?.following.includes(user?._id);
+  const amIFollowing = authUser?.following.includes(user?._id);
 
   const memberSinceDate = formatMemberSinceDate(user?.createdAt);
 
@@ -136,17 +166,18 @@ const Profile = () => {
                   <button
                     className="btn btn-outline rounded-full btn-sm"
                     onClick={() => follow(user?._id)}
-                    disabled={isPending}
+                    disabled={isFollowing}
                   >
-                    {isFollowing && !isPending ? "Unfollow" : "Follow"}
+                    {amIFollowing && !isFollowing ? "Unfollow" : "Follow"}
                   </button>
                 )}
                 {(coverImg || profileImg) && (
                   <button
                     className="btn btn-primary rounded-full btn-sm text-white px-4 ml-2"
-                    onClick={() => alert("Profile updated successfully")}
+                    onClick={() => updateProfile()}
+                    disabled={isUpdatingProfile}
                   >
-                    Update
+                    {isUpdatingProfile ? "Updating..." : "Update"}
                   </button>
                 )}
               </div>
