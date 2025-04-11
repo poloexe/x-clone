@@ -12,6 +12,8 @@ import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { useUserProfile } from "../../hooks/useUserProfile";
 import { formatMemberSinceDate } from "../../utils/date";
+import { useAuthUser } from "../../hooks/useAuthUser";
+import { useFollow } from "../../hooks/useFollow";
 
 const Profile = () => {
   const [coverImg, setCoverImg] = useState(null);
@@ -20,6 +22,7 @@ const Profile = () => {
 
   const { username } = useParams();
 
+  const { data: authUser } = useAuthUser();
   const {
     data: user,
     isLoading,
@@ -27,10 +30,15 @@ const Profile = () => {
     isRefetching,
   } = useUserProfile({ username });
 
+  const { mutate: follow, isPending } = useFollow();
+
   const coverImgRef = useRef(null);
   const profileImgRef = useRef(null);
 
-  const isMyProfile = true;
+  const isMyProfile = authUser?._id === user?._id;
+
+  const isFollowing = authUser?.following.includes(user?._id);
+
   const memberSinceDate = formatMemberSinceDate(user?.createdAt);
 
   const handleImgChange = (e, state) => {
@@ -127,9 +135,10 @@ const Profile = () => {
                 {!isMyProfile && (
                   <button
                     className="btn btn-outline rounded-full btn-sm"
-                    onClick={() => alert("Followed successfully")}
+                    onClick={() => follow(user?._id)}
+                    disabled={isPending}
                   >
-                    Follow
+                    {isFollowing && !isPending ? "Unfollow" : "Follow"}
                   </button>
                 )}
                 {(coverImg || profileImg) && (

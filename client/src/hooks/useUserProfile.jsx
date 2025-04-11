@@ -8,9 +8,6 @@ export const useUserProfile = ({ username }) => {
         const res = await fetch(`/api/user/profile/${username}`);
         const data = await res.json();
 
-        console.log(res);
-        console.log(data);
-
         if (!res.ok) throw new Error(data.error || "Somwthing went wrong");
 
         return data;

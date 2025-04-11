@@ -20,8 +20,8 @@ export const useFollow = () => {
         throw error;
       }
     },
-    onSuccess: () => {
-      toast.success("Followed");
+    onSuccess: (data) => {
+      toast.success(data.msg);
 
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ["suggested"] }),
