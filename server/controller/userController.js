@@ -109,6 +109,8 @@ export const updateUser = async (req, res) => {
 
       if (newPassword.length < 7)
         return res.status(400).json({ error: "New Password is too short" });
+
+      user.password = newPassword;
     }
 
     if (profileImg) {
@@ -134,7 +136,6 @@ export const updateUser = async (req, res) => {
     user.fullName = fullName || user.fullName;
     user.username = username || user.username;
     user.email = email || user.email;
-    user.password = newPassword || user.password;
     user.bio = bio || user.bio;
     user.link = link || user.link;
     user.profileImg = profileImg || user.profileImg;
