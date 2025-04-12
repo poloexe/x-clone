@@ -17,7 +17,7 @@ const Post = ({ post }) => {
   const { data: authUser } = useAuthUser();
   const isLiked = post.likes.includes(authUser._id);
 
-  const isMyPost = authUser._id === postOwner._id;
+  const isMyPost = authUser?._id === postOwner?._id;
 
   const formattedDate = formatPostDate(post.createdAt);
 
@@ -128,20 +128,20 @@ const Post = ({ post }) => {
       <div className="flex gap-2 items-start p-4 border-b border-gray-700">
         <div className="avatar">
           <Link
-            to={`/profile/${postOwner.username}`}
+            to={`/profile/${postOwner?.username}`}
             className="w-8 rounded-full overflow-hidden"
           >
-            <img src={postOwner.profileImg || "/avatar-placeholder.png"} />
+            <img src={postOwner?.profileImg || "/avatar-placeholder.png"} />
           </Link>
         </div>
         <div className="flex flex-col flex-1">
           <div className="flex gap-2 items-center">
-            <Link to={`/profile/${postOwner.username}`} className="font-bold">
-              {postOwner.fullName}
+            <Link to={`/profile/${postOwner?.username}`} className="font-bold">
+              {postOwner?.fullName}
             </Link>
             <span className="text-gray-700 flex gap-1 text-sm">
-              <Link to={`/profile/${postOwner.username}`}>
-                @{postOwner.username}
+              <Link to={`/profile/${postOwner?.username}`}>
+                @{postOwner?.username}
               </Link>
               <span>·</span>
               <span>{formattedDate}</span>
@@ -177,7 +177,7 @@ const Post = ({ post }) => {
                 className="flex gap-1 items-center cursor-pointer group"
                 onClick={() =>
                   document
-                    .getElementById("comments_modal" + post._id)
+                    .getElementById("comments_modal" + post?._id)
                     .showModal()
                 }
               >
@@ -201,12 +201,12 @@ const Post = ({ post }) => {
                       </p>
                     )}
                     {post.comments.map((comment) => (
-                      <div key={comment._id} className="flex gap-2 items-start">
+                      <div key={comment?._id} className="flex gap-2 items-start">
                         <div className="avatar">
                           <div className="w-8 rounded-full">
                             <img
                               src={
-                                comment.user.profileImg ||
+                                comment?.user?.profileImg ||
                                 "/avatar-placeholder.png"
                               }
                             />
@@ -215,13 +215,13 @@ const Post = ({ post }) => {
                         <div className="flex flex-col">
                           <div className="flex items-center gap-1">
                             <span className="font-bold">
-                              {comment.user.fullName}
+                              {comment?.user?.fullName}
                             </span>
                             <span className="text-gray-700 text-sm">
-                              @{comment.user.username}
+                              @{comment?.user?.username}
                             </span>
                           </div>
-                          <div className="text-sm">{comment.text}</div>
+                          <div className="text-sm">{comment?.text}</div>
                         </div>
                       </div>
                     ))}
