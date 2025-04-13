@@ -23,7 +23,6 @@ cloudinary.config({
 app.use(
   cors({
     origin: "http://localhost:9000",
-    credentials: true,
   })
 );
 

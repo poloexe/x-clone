@@ -64,6 +64,10 @@ const userSchema = new Schema(
 );
 
 userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next(); // Hash only when the password changes
+
+  if (!this.password || this.password.trim() === "") return next(); //Don't hash empty fields
+
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 

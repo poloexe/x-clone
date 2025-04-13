@@ -97,11 +97,6 @@ export const updateUser = async (req, res) => {
     let user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: "No user found" });
 
-    if ((!currentPassword && newPassword) || (!newPassword && currentPassword))
-      return res
-        .status(400)
-        .json({ error: "Fill both current password and new password" });
-
     if (currentPassword && newPassword) {
       const isMatch = await user.comparePassword(currentPassword);
       if (!isMatch)
