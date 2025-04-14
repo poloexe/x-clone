@@ -56,3 +56,21 @@ export const deleteAllNotifications = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+export const getUnreadNotificationCount = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const unread = await Notification.countDocuments({
+      to: userId,
+      read: false,
+    });
+
+    if (!unread)
+      return res.status(400).json({ error: "No unread notifications" });
+
+    return res.status(200).json(unread);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};

@@ -1,6 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useNotifications = () => {
+  const queryClient = useQueryClient();
+
   return useQuery({
     queryKey: ["notifications"],
     queryFn: async () => {
@@ -15,6 +17,9 @@ export const useNotifications = () => {
         console.log(error.message);
         throw error;
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["unreadNotifications"] });
     },
   });
 };

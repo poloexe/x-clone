@@ -5,34 +5,13 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
 import { useNotifications } from "../../hooks/useNotifications";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
+
+import { useDeleteAllNotifications } from "../../hooks/useDeleteAllNotifications";
 
 const Notification = () => {
-  const queryClient = useQueryClient();
-
   const { data: notifications, isLoading } = useNotifications();
-  const { mutate: deleteAllNotifications, isPending } = useMutation({
-    mutationFn: async () => {
-      try {
-        const res = await fetch("/api/notification/delete", {
-          method: "DELETE",
-        });
-        const data = await res.json();
-
-        if (!res.ok) throw new Error(data.error || "Something went wrong");
-
-        return data;
-      } catch (error) {
-        console.log(error.message);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      toast.success("Deleted");
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
-    },
-  });
+  const { mutate: deleteAllNotifications, isPending } =
+    useDeleteAllNotifications();
 
   const deleteNotifications = () => {
     if (isPending) return;

@@ -7,11 +7,14 @@ import { BiLogOut } from "react-icons/bi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useAuthUser } from "../../hooks/useAuthUser";
+import { useUnreadNotifications } from "../../hooks/useUnreadNotifications";
 
 const Sidebar = () => {
   const { data: authUser } = useAuthUser();
 
   const queryClient = useQueryClient();
+
+  const { data: unreadNotifications } = useUnreadNotifications();
 
   const { mutate: logout } = useMutation({
     mutationFn: async () => {
@@ -51,9 +54,14 @@ const Sidebar = () => {
           <li className="flex justify-center md:justify-start">
             <Link
               to="/notifications"
-              className="flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer"
+              className="flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer relative"
             >
               <IoNotifications className="w-6 h-6" />
+              {unreadNotifications > 0 && (
+                <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {unreadNotifications}
+                </span>
+              )}
               <span className="text-lg hidden md:block">Notifications</span>
             </Link>
           </li>
