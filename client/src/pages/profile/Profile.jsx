@@ -34,9 +34,9 @@ const Profile = () => {
   const { mutate: follow, isPending: isFollowing } = useFollow();
 
   // Updating cover image and profile img
-  const { mutate: updateProfile, isPending: isUpdatingProfile } =
+  const { mutateAsync: updateProfile, isPending: isUpdatingProfile } =
     useUpdatingProfile({ profileImg, coverImg });
-  
+
   const coverImgRef = useRef(null);
   const profileImgRef = useRef(null);
 
@@ -149,7 +149,11 @@ const Profile = () => {
                 {(coverImg || profileImg) && (
                   <button
                     className="btn btn-primary rounded-full btn-sm text-white px-4 ml-2"
-                    onClick={() => updateProfile()}
+                    onClick={async () => {
+                      await updateProfile();
+                      setCoverImg(null);
+                      setProfileImg(null);
+                    }}
                     disabled={isUpdatingProfile}
                   >
                     {isUpdatingProfile ? "Updating..." : "Update"}
