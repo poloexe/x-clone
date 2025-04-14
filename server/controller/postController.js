@@ -144,11 +144,11 @@ export const getAllPosts = async (req, res) => {
       .populate([
         {
           path: "user",
-          select: "fullName username",
+          select: "-password",
         },
         {
           path: "comments.user",
-          select: "fullName username",
+          select: "-password",
         },
       ]);
 

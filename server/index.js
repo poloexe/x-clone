@@ -9,12 +9,12 @@ import { authUser } from "./middleware/authUser.js";
 import { v2 as cloudinary } from "cloudinary";
 import postRouter from "./routes/postRouter.js";
 import notificationRouter from "./routes/notificationRouter.js";
+dotenv.config();
 
 const PORT = process.env.PORT || 8000;
 const app = express();
 const __dirname = path.resolve();
 
-dotenv.config();
 cloudinary.config({
   cloud_name: process.env.cloud_name,
   api_key: process.env.api_key,
