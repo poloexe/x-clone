@@ -16,6 +16,6 @@ export const useUnreadNotifications = () => {
         throw error;
       }
     },
-    refetchInterval: 5000, // Poll every 5 seconds for updates
+    refetchInterval: 5000,
   });
 };

@@ -21,10 +21,7 @@ export const useDeleteAllNotifications = () => {
     },
     onSuccess: () => {
       toast.success("Deleted");
-      promise.all([
-        queryClient.invalidateQueries({ queryKey: ["notifications"] }),
-        queryClient.invalidateQueries({ queryKey: ["unreadNotifications"] }),
-      ]);
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 };

@@ -66,9 +66,6 @@ export const getUnreadNotificationCount = async (req, res) => {
       read: false,
     });
 
-    if (!unread)
-      return res.status(400).json({ error: "No unread notifications" });
-
     return res.status(200).json(unread);
   } catch (error) {
     return res.status(500).json(error);
