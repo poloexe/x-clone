@@ -5,7 +5,6 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
 import { useNotifications } from "../../hooks/useNotifications";
-
 import { useDeleteAllNotifications } from "../../hooks/useDeleteAllNotifications";
 
 const Notification = () => {

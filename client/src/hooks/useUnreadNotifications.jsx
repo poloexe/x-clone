@@ -16,6 +16,6 @@ export const useUnreadNotifications = () => {
         throw error;
       }
     },
-    refetchInterval: 5000,
+    refetchInterval: 2000,
   });
 };
