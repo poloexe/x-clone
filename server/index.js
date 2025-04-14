@@ -1,3 +1,4 @@
+import path from "path";
 import express, { urlencoded } from "express";
 import dotenv from "dotenv";
 import connectMongoDb from "./db/connectMongoDb.js";
@@ -8,10 +9,10 @@ import { authUser } from "./middleware/authUser.js";
 import { v2 as cloudinary } from "cloudinary";
 import postRouter from "./routes/postRouter.js";
 import notificationRouter from "./routes/notificationRouter.js";
-import cors from "cors";
 
 const PORT = process.env.PORT || 8000;
 const app = express();
+const __dirname = path.resolve();
 
 dotenv.config();
 cloudinary.config({
@@ -19,12 +20,6 @@ cloudinary.config({
   api_key: process.env.api_key,
   api_secret: process.env.api_secret,
 });
-
-app.use(
-  cors({
-    origin: "http://localhost:9000",
-  })
-);
 
 app.use(express.json({ limit: "5mb" }));
 app.use(urlencoded({ extended: true }));
@@ -34,6 +29,14 @@ app.use("/api/auth", authRouter);
 app.use("/api/user", authUser, userRouter);
 app.use("/api/post", authUser, postRouter);
 app.use("/api/notification", authUser, notificationRouter);
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../client/dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "../client/dist/index.html"));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}...`);
