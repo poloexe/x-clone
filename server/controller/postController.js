@@ -162,7 +162,10 @@ export const getLikedPost = async (req, res) => {
   try {
     const userId = req.params.id;
 
-    const posts = await Post.find();
+    const posts = await Post.find().populate({
+      path: "user",
+      select: "-password",
+    });
     if (!posts || posts.length === 0)
       return res.status(404).json({ error: "No Posts available" });
 
