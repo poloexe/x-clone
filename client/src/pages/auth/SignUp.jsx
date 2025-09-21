@@ -26,7 +26,7 @@ const SignUp = () => {
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: async ({ email, username, fullName, password }) => {
       try {
-        const res = await fetch("/api/auth/signup", {
+        const res = await fetch("https://x-clone-h3o7.onrender.com/api/auth/signup", {
           method: "POST",
           headers: {
             "Content-type": "application/json",

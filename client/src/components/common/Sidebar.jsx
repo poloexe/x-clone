@@ -19,7 +19,7 @@ const Sidebar = () => {
   const { mutate: logout } = useMutation({
     mutationFn: async () => {
       try {
-        const res = await fetch("/api/auth/logout", {
+        const res = await fetch("https://x-clone-h3o7.onrender.com/api/auth/logout", {
           method: "POST",
         });
         const data = res.json();

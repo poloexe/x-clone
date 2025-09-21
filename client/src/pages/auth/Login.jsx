@@ -23,12 +23,13 @@ const Login = () => {
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: async ({ username, password }) => {
       try {
-        const res = await fetch("/api/auth/signin", {
+        const res = await fetch(`https://x-clone-h3o7.onrender.com/api/auth/signin`, {
           method: "POST",
           headers: {
             "Content-type": "application/json",
           },
           body: JSON.stringify({ username, password }),
+          credentials: "include",
         });
         const data = await res.json();
 

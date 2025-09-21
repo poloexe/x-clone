@@ -5,7 +5,7 @@ export const useAuthUser = () => {
     queryKey: ["authUser"],
     queryFn: async () => {
       try {
-        const res = await fetch("/api/auth/getuser");
+        const res = await fetch("https://x-clone-h3o7.onrender.com/api/auth/getuser");
         const data = await res.json();
 
         if (data.error) return null;

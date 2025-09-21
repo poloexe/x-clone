@@ -15,8 +15,7 @@ const PORT = process.env.PORT || 8000;
 const app = express();
 
 const allowedOrigins = [
-  "http://localhost:9000",       
-  "https://my-frontend.onrender.com",  
+  "http://localhost:9000",      
 ];
 
 app.use(
