@@ -14,10 +14,23 @@ dotenv.config();
 const PORT = process.env.PORT || 8000;
 const app = express();
 
-app.use(cors({
-  origin: true,
-  credentials: true,
-}));
+const allowedOrigins = [
+  "http://localhost:9000",       
+  "https://my-frontend.onrender.com",  
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  })
+);
 
 cloudinary.config({
   cloud_name: process.env.cloud_name,
