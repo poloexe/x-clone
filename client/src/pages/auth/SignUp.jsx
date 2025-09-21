@@ -5,8 +5,9 @@ import { MdOutlineMail } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import { MdPassword } from "react-icons/md";
 import { MdDriveFileRenameOutline } from "react-icons/md";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +16,8 @@ const SignUp = () => {
     fullName: "",
     password: "",
   });
+  const navigate = useNavigate();
+  const queryClient = useQueryClient()
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,13 +42,15 @@ const SignUp = () => {
       }
     },
     onSuccess: () => {
-      toast.success("Account created, now login");
+      toast.success("Account created successfully");
+      queryClient.invalidateQueries({ queryKey: ["authUser"] });
       setFormData({
         email: "",
         username: "",
         fullName: "",
         password: "",
       });
+      navigate("/");
     },
   });
 
